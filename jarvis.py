@@ -1,5 +1,6 @@
 import os
 import time
+import datetime
 import speech_recognition #https://pypi.org/project/SpeechRecognition/
 import pyttsx3 #https://pypi.org/project/pyttsx3/
 from gtts import gTTS #https://pypi.org/project/gTTS/
@@ -111,7 +112,33 @@ def text_to_speech_google(text: str):
 '''
 DATOS DE TIEMPO Y LUGAR
 '''
-# TODO datos de día y hora
+# datos de día y hora
+def date_time_data ():
+    datetime_now = datetime.datetime.now()
+    today_weekday = datetime_now.isoweekday()
+    weekday = ""
+    
+    # literal of day of week
+    if today_weekday == 1:
+        weekday = "lunes"
+    elif today_weekday == 2:
+        weekday = "martes"
+    elif today_weekday == 3:
+        weekday = "miércoles"
+    elif today_weekday == 4:
+        weekday = "jueves"
+    elif today_weekday == 5:
+        weekday = "viernes"
+    elif today_weekday == 6:
+        weekday = "sábado"
+    elif today_weekday == 7:
+        weekday = "domingo"
+
+    date_time = f"Hoy es {weekday}, {datetime_now.day} del {datetime_now.month} de {datetime_now.year} y son las {datetime_now.hour} y {datetime_now.minute}"
+    print(date_time)
+    text_to_speech(date_time)
+
+
 # TODO datos de clima
 
 '''
@@ -128,9 +155,12 @@ BUSCAR INFORMACIÓN
 # TODO buscar en wikipedia
 # TODO hablar con ChatGPT
 
+'''
 text_from_speech = speech_to_text()
 text_to_speech_google(text_from_speech)
 text_to_speech(text_from_speech)
 tts_change_voice()
 tts_change_volume(0.5)
 tts_change_rate(100)
+date_time_data()
+'''
