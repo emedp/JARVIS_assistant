@@ -6,12 +6,6 @@ import pyttsx3 #https://pypi.org/project/pyttsx3/
 from gtts import gTTS #https://pypi.org/project/gTTS/
 
 '''
-JARVIS CORE
-'''
-# TODO loop
-# TODO GUI
-
-'''
 TRANSCRIBIR VOZ - TEXTO
 '''
 # speech recognition
@@ -24,7 +18,7 @@ def speech_to_text ():
     recognizer = speech_recognition.Recognizer()
     with speech_recognition.Microphone() as source:
         recognizer.adjust_for_ambient_noise(source, duration=0.5) # listen for 0.5 second, the minimum, to calibrate the energy threshold for ambient noise levels
-        print("Say something...")
+        print("Escuchando...")
         audio = recognizer.listen(source)
 
     # try recognize speech using Google Speech Recognition
@@ -156,11 +150,69 @@ BUSCAR INFORMACIÓN
 # TODO hablar con ChatGPT
 
 '''
-text_from_speech = speech_to_text()
-text_to_speech_google(text_from_speech)
-text_to_speech(text_from_speech)
-tts_change_voice()
-tts_change_volume(0.5)
-tts_change_rate(100)
-date_time_data()
+JARVIS CORE
 '''
+# loop
+running = True
+
+# starting the program, the welcome
+text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿En que le puedo ayudar?")
+
+while running:
+    commands = speech_to_text()
+
+    command_all_comands = "dime qué puedes hacer"
+    command_power_off = "apágate"
+    command_say = "di esto"
+    command_google_say = "haz que Google diga"
+    command_change_voice = "cambia tu voz"
+    command_change_volume = "cambia el volumen a"
+    command_change_rate = "cambia la velocidad a"
+    command_say_datetime = "dime el día con hora de hoy"
+
+    all_commands = [
+        command_power_off,
+        command_say,
+        command_google_say,
+        command_change_voice,
+        command_change_volume,
+        command_change_rate,
+        command_say_datetime,
+    ]
+
+    # Split commands
+    for command in commands.split(" y "):
+        # analize command
+        if command_power_off in command:
+            text_to_speech("Hasta luego señor")
+            running = False
+            break
+        elif command_all_comands in command:
+            text_to_speech("Estos son todos los comandos que puedes realizar")
+            for option in all_commands:
+                print("-",option)
+                text_to_speech(option)
+
+        elif command_say in command:
+            text_to_speech(command.split(command_say)[1])
+        elif command_google_say in command:
+            text_to_speech_google(command.split(command_google_say)[1])
+        elif command_change_voice in command:
+            tts_change_voice()
+        elif command_change_volume in command:
+            volume = command.split(command_change_volume)[1]
+            volume = float(volume) / 100
+            tts_change_volume(volume)
+        elif command_change_rate in command:
+            rate = command.split(command_change_rate)[1]
+            rate = int(rate)
+            tts_change_rate(rate)
+        elif command_say_datetime in command:
+            date_time_data()
+        else:
+            text_to_speech("Creo que no has dicho ningún comando existente")
+
+    
+tts.stop()
+
+# TODO GUI
