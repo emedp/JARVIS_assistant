@@ -1,4 +1,8 @@
+import os
+import time
 import speech_recognition #https://pypi.org/project/SpeechRecognition/
+import pyttsx3 #https://pypi.org/project/pyttsx3/
+from gtts import gTTS #https://pypi.org/project/gTTS/
 
 '''
 JARVIS CORE
@@ -34,8 +38,75 @@ def speech_to_text ():
     stt = str(stt_google)
     return stt
 
-# TODO text to speech
-# TODO escuchar con el micro
+# text to speech
+tts = pyttsx3.init()
+def text_to_speech(text: str):
+    tts.say(text)
+    tts.runAndWait()
+
+def tts_change_voice ():
+    voices=tts.getProperty('voices')
+
+    text_to_speech("Selecciona una nueva voz diciendo el número")
+    print("Select the new voice saying its number:")
+
+    # presenting all voice options
+    for index, voice in enumerate(voices):
+        print(f"0{index}. {voice.name}")
+    
+    # select the new voice
+    voice_selected = speech_to_text()
+    text_to_speech(f"He escuchado {voice_selected}")
+    print("Voice selected:", voice_selected)
+
+    # check selection is a number
+    if voice_selected.isnumeric == False:
+        text_to_speech("Tu respuesta no es un número. Vuelve a intentarlo")
+        return
+    
+    # convert string to integer
+    voice_selected = int(voice_selected)
+
+    # check selection is a valid number
+    if voice_selected < 0 or voice_selected >= len(voices):
+        text_to_speech("Esa no es una opción válida. Vuelve a intentarlo")
+        return
+    
+    # if checks are OK then make the change of voice
+    tts.setProperty("voice", voices[voice_selected].id)
+    text_to_speech(f"He cambiado mi voz a {voices[voice_selected].name}")
+   
+def tts_change_rate (new_rate: int):
+    old_rate = tts.getProperty('rate')
+    tts.setProperty("rate", new_rate)
+
+    print("old speed rate:", old_rate)
+    print("new speed rate:", new_rate)
+    text_to_speech(f"Mi velocidad de voz ha cambiado de {old_rate} a {new_rate} puntos en palabras por minuto")
+
+def tts_change_volume (new_volume: float):
+    old_volume = tts.getProperty('volume')
+    tts.setProperty("volume", new_volume)
+    
+    print("old volume:", old_volume)
+    print("new volume:", new_volume)
+    text_to_speech(f"Mi volumen ha cambiado del {int(old_volume*100)}% al {int(new_volume*100)}%")
+
+def text_to_speech_google(text: str):
+    tts = gTTS("Tu asistente de Google dice: " + text, lang="es",tld="es")
+    
+    # TODO pasar el siguiente bloque a reproduccion en tiempo real y no con un archivo mp3
+
+    # save the audio in a file
+    tts.save('tts.mp3')
+    #open the audio file
+    os.system("tts.mp3")
+    # sleep main thread to give OS time to play file
+    time.sleep(1)
+    # delete the audio file
+    os.remove("tts.mp3")
+
+    return tts
 
 '''
 DATOS DE TIEMPO Y LUGAR
@@ -57,4 +128,9 @@ BUSCAR INFORMACIÓN
 # TODO buscar en wikipedia
 # TODO hablar con ChatGPT
 
-speech = speech_to_text()
+text_from_speech = speech_to_text()
+text_to_speech_google(text_from_speech)
+text_to_speech(text_from_speech)
+tts_change_voice()
+tts_change_volume(0.5)
+tts_change_rate(100)
