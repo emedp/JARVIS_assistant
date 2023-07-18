@@ -24,7 +24,7 @@ def speech_to_text ():
     # try recognize speech using Google Speech Recognition
     try:
         stt_google = recognizer.recognize_google(audio, language="es-ES")
-        print("Google Speech Recognition thinks you said: " + stt_google)
+        print("GSP: " + stt_google)
     except speech_recognition.UnknownValueError:
         print("Google Speech Recognition could not understand audio. Try again")
     except speech_recognition.RequestError as e:
@@ -36,6 +36,7 @@ def speech_to_text ():
 # text to speech
 tts = pyttsx3.init()
 def text_to_speech(text: str):
+    print("TTS:", text)
     tts.say(text)
     tts.runAndWait()
 
@@ -43,7 +44,6 @@ def tts_change_voice ():
     voices=tts.getProperty('voices')
 
     text_to_speech("Selecciona una nueva voz diciendo el número")
-    print("Select the new voice saying its number:")
 
     # presenting all voice options
     for index, voice in enumerate(voices):
@@ -51,8 +51,7 @@ def tts_change_voice ():
     
     # select the new voice
     voice_selected = speech_to_text()
-    text_to_speech(f"He escuchado {voice_selected}")
-    print("Voice selected:", voice_selected)
+    text_to_speech(f"He entendido {voice_selected}")
 
     # check selection is a number
     if voice_selected.isnumeric == False:
@@ -74,21 +73,15 @@ def tts_change_voice ():
 def tts_change_rate (new_rate: int):
     old_rate = tts.getProperty('rate')
     tts.setProperty("rate", new_rate)
-
-    print("old speed rate:", old_rate)
-    print("new speed rate:", new_rate)
     text_to_speech(f"Mi velocidad de voz ha cambiado de {old_rate} a {new_rate} puntos en palabras por minuto")
 
 def tts_change_volume (new_volume: float):
     old_volume = tts.getProperty('volume')
     tts.setProperty("volume", new_volume)
-    
-    print("old volume:", old_volume)
-    print("new volume:", new_volume)
     text_to_speech(f"Mi volumen ha cambiado del {int(old_volume*100)}% al {int(new_volume*100)}%")
 
 def text_to_speech_google(text: str):
-    tts = gTTS("Tu asistente de Google dice: " + text, lang="es",tld="es")
+    tts = gTTS(text, lang="es",tld="es")
     
     # TODO pasar el siguiente bloque a reproduccion en tiempo real y no con un archivo mp3
 
@@ -129,18 +122,9 @@ def date_time_data ():
         weekday = "domingo"
 
     date_time = f"Hoy es {weekday}, {datetime_now.day} del {datetime_now.month} de {datetime_now.year} y son las {datetime_now.hour} y {datetime_now.minute}"
-    print(date_time)
     text_to_speech(date_time)
 
-
 # TODO datos de clima
-
-'''
-MONITORIZACIÓN Y CONTROL DEL EQUIPO
-'''
-# TODO datos del sistema como batería, RAM, ROM, CPU, GPU, etc
-# TODO cambiar valores del sistema como volumen, etc
-# TODO check internet velocity
 
 '''
 BUSCAR INFORMACIÓN
@@ -150,12 +134,20 @@ BUSCAR INFORMACIÓN
 # TODO hablar con ChatGPT
 
 '''
+MONITORIZACIÓN Y CONTROL DEL EQUIPO
+'''
+# TODO datos del sistema (batería, RAM, ROM, CPU, GPU, etc)
+# TODO cambiar valores del sistema como volumen, etc
+# TODO check internet velocity
+
+'''
 JARVIS CORE
 '''
 # loop
 running = True
 
 # starting the program, the welcome
+#text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
 text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿En que le puedo ayudar?")
 
 while running:
@@ -190,7 +182,6 @@ while running:
         elif command_all_comands in command:
             text_to_speech("Estos son todos los comandos que puedes realizar")
             for option in all_commands:
-                print("-",option)
                 text_to_speech(option)
 
         elif command_say in command:
