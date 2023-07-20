@@ -4,6 +4,7 @@ import datetime
 import speech_recognition #https://pypi.org/project/SpeechRecognition/
 import pyttsx3 #https://pypi.org/project/pyttsx3/
 from gtts import gTTS #https://pypi.org/project/gTTS/
+import wikipedia
 
 '''
 TRANSCRIBIR VOZ - TEXTO
@@ -130,7 +131,12 @@ def date_time_data ():
 BUSCAR INFORMACIÓN
 '''
 # TODO buscar en google
-# TODO buscar en wikipedia
+# buscar en wikipedia
+wikipedia.set_lang("es")
+def wikipedia_search (search):
+    result = wikipedia.summary(search, sentences=1)
+    text_to_speech(result)
+
 # TODO hablar con ChatGPT
 
 '''
@@ -161,6 +167,7 @@ while running:
     command_change_volume = "cambia el volumen a"
     command_change_rate = "cambia la velocidad a"
     command_say_datetime = "dime el día con hora de hoy"
+    command_wikipedia = "busca en Wikipedia"
 
     all_commands = [
         command_power_off,
@@ -170,6 +177,7 @@ while running:
         command_change_volume,
         command_change_rate,
         command_say_datetime,
+        command_wikipedia,
     ]
 
     # Split commands
@@ -200,6 +208,8 @@ while running:
             tts_change_rate(rate)
         elif command_say_datetime in command:
             date_time_data()
+        elif command_wikipedia in command:
+            wikipedia_search(command.split(command_wikipedia)[1])
         else:
             text_to_speech("Creo que no has dicho ningún comando existente")
 
