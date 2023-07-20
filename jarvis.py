@@ -149,6 +149,10 @@ MONITORIZACIÓN Y CONTROL DEL EQUIPO
 '''
 JARVIS CORE
 '''
+# start
+# play highway to hell
+os.system("ACDC-Highway_to_Hell.mp3")
+
 # loop
 running = True
 
