@@ -4,7 +4,9 @@ import datetime
 import speech_recognition #https://pypi.org/project/SpeechRecognition/
 import pyttsx3 #https://pypi.org/project/pyttsx3/
 from gtts import gTTS #https://pypi.org/project/gTTS/
-import wikipedia
+import wikipedia #https://pypi.org/project/wikipedia/
+import psutil #https://pypi.org/project/psutil/
+import platform # https://www.thepythoncode.com/article/get-hardware-system-information-python
 
 '''
 TRANSCRIBIR VOZ - TEXTO
@@ -142,7 +144,126 @@ def wikipedia_search (search):
 '''
 MONITORIZACIÓN Y CONTROL DEL EQUIPO
 '''
-# TODO datos del sistema (batería, RAM, ROM, CPU, GPU, etc)
+# Monitorizar sistema
+def scalated_bytes (bytes):
+    factor = 1024
+    units = ["B", "KB", "MB", "GB", "TB", "PB"]
+
+    for unit in units:
+        if bytes < factor:
+            return f"{bytes:.2f}{unit}"
+        bytes = bytes / factor
+
+def monitoring_system ():
+
+    # SYSTEM INFORMATION
+    system = "Sistema Operativo: " + platform.system() + " " + platform.release()
+    release = "Versión del S.O.: " +  platform.version()
+    node = "Nombre de equipo en la red: " +  platform.node()
+    machine = "Arquitectura: " + platform.machine()
+    processor = "Procesador: " + platform.processor()
+
+    text_to_speech(system)
+    text_to_speech(release)
+    text_to_speech(node)
+    text_to_speech(machine)
+    text_to_speech(processor)
+
+    # BOOT SYSTEM TIME
+    boot_dt = datetime.datetime.fromtimestamp(psutil.boot_time())
+    text_to_speech(f"El arranque se realizó el {boot_dt.day} del {boot_dt.month} del {boot_dt.year} a las {boot_dt.hour} y {boot_dt.minute}")
+
+    # BATTERY INFORMATION
+
+    battery = psutil.sensors_battery()
+    if battery == None:
+        text_to_speech(f"No hay batería conectada")
+    
+
+    # CPU INFORMATION
+
+    # CPU cores number
+    cores_total = psutil.cpu_count(logical=True)
+    cores_physical = psutil.cpu_count(logical=False)
+    cores_logical = cores_total - cores_physical
+    text_to_speech("Número total de núcleos: " + str(cores_total))
+    text_to_speech("Número de núcleos físicos: " + str(cores_physical))
+    text_to_speech("Número de núcleos lógicos: " + str(cores_logical))
+
+    # CPU frequencies
+    cpu_freq = psutil.cpu_freq()
+    text_to_speech(f"Frecuencia máxima: {cpu_freq.max:.0f} Mhz")
+    text_to_speech(f"Frecuencia mínima: {cpu_freq.min:.0f} Mhz")
+    text_to_speech(f"Frecuencia actual: {cpu_freq.current:.0f} Mhz")
+
+    # CPU usage
+    for index, percent in enumerate(psutil.cpu_percent(percpu=True, interval=1)):
+        text_to_speech(f"Núcleo {index} al {percent:.0f}%")
+    
+    text_to_speech(f"Uso total de la CPU: {psutil.cpu_percent():.0f}%")
+
+    
+    # MEMORY INFORMATION
+
+    svmem = psutil.virtual_memory()
+    text_to_speech(f"Memoria RAM total: {scalated_bytes(svmem.total)}")
+    text_to_speech(f"Memoria RAM disponible: {scalated_bytes(svmem.available)} un {100-svmem.percent:.0f}% libre")
+    text_to_speech(f"Memoria RAM usada: {scalated_bytes(svmem.used)} un {svmem.percent:.0f}% ocupado")
+
+    try:
+        swap = psutil.swap_memory()
+        text_to_speech(f"Memoria SWAP total: {scalated_bytes(swap.total)}")
+        text_to_speech(f"Memoria SWAP disponible: {scalated_bytes(swap.available)} un {100-swap.percent:.0f}% libre")
+        text_to_speech(f"Memoria SWAP usada: {scalated_bytes(swap.used)} un {swap.percent:.0f}% ocupado")
+    except:
+        text_to_speech("No ha sido posible leer la memoria SWAP")
+
+
+    # DISK INFORMATION
+    for partition in psutil.disk_partitions():
+        text_to_speech(f"Disco: {partition.device}")
+        text_to_speech(f"Punto de montaje: {partition.mountpoint}")
+        text_to_speech(f"Sistema de archivos: {partition.fstype}")
+        try:
+            partition_usage = psutil.disk_usage(partition.mountpoint)
+            text_to_speech(f"Partición espacio total: {scalated_bytes(partition_usage.total)}")
+            text_to_speech(f"Partición espacio usado: {scalated_bytes(partition_usage.used)} un {100-partition_usage.percent:.0f}%")
+            text_to_speech(f"Partición espacio libre: {scalated_bytes(partition_usage.free)} un {partition_usage.percent:.0f}%")
+        except PermissionError:
+            continue
+    
+    # IO statistics  since boot
+    disk_io = psutil.disk_io_counters()
+    text_to_speech(f"Total leído desde arranque: {scalated_bytes(disk_io.read_bytes)}")
+    text_to_speech(f"Total escrito desde arranque: {scalated_bytes(disk_io.write_bytes)}")
+
+
+    # NETWORK INFORMATION
+
+    # network interfaces (virtual and physical)
+    net_addrs = psutil.net_if_addrs()
+
+    for interface_name, interface_addrs in net_addrs.items():
+        text_to_speech(f"Interfaz: {interface_name}")
+        for addr in interface_addrs:
+            if str(addr.family) == "AddressFamily.AF_INET":
+                text_to_speech(f"Dirección IP: {addr.address}")
+                text_to_speech(f"Máscara: {addr.netmask}")
+                text_to_speech(f"Transmisión IP: {addr.broadcast}")
+            elif str(addr.family) == 'AddressFamily.AF_PACKET':
+                text_to_speech(f"Dirección MAC: {addr.address}")
+                text_to_speech(f"Máscara: {addr.netmask}")
+                text_to_speech(f"Transmisión MAC: {addr.broadcast}")
+    
+    # IO statistics  since boot
+    net_io = psutil.net_io_counters()
+    text_to_speech(f"Total paquetes enviados desde arranque: {net_io.packets_sent}")
+    text_to_speech(f"Total paquetes recibidos desde arranque: {net_io.packets_recv}")
+    text_to_speech(f"Total datos enviados desde arranque: {scalated_bytes(net_io.bytes_sent)}")
+    text_to_speech(f"Total datos recibidos desde arranque: {scalated_bytes(net_io.bytes_recv)}")
+    text_to_speech(f"Total errores al enviar datos desde arranque: {net_io.errout}")
+    text_to_speech(f"Total errores al recibir datos desde arranque: {net_io.errin}")
+
 # TODO cambiar valores del sistema como volumen, etc
 # TODO check internet velocity
 
@@ -158,7 +279,7 @@ running = True
 
 # starting the program, the welcome
 #text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
-text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿En que le puedo ayudar?")
+text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿Qué puedo hacer por usted?")
 
 while running:
     commands = speech_to_text()
@@ -172,6 +293,7 @@ while running:
     command_change_rate = "cambia la velocidad a"
     command_say_datetime = "dime el día con hora de hoy"
     command_wikipedia = "busca en Wikipedia"
+    command_system_info = "monitoriza el sistema"
 
     all_commands = [
         command_power_off,
@@ -182,6 +304,7 @@ while running:
         command_change_rate,
         command_say_datetime,
         command_wikipedia,
+        command_system_info,
     ]
 
     # Split commands
@@ -214,6 +337,8 @@ while running:
             date_time_data()
         elif command_wikipedia in command:
             wikipedia_search(command.split(command_wikipedia)[1])
+        elif command_system_info in command:
+            monitoring_system()
         else:
             text_to_speech("Creo que no has dicho ningún comando existente")
 
