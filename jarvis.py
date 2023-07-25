@@ -7,6 +7,7 @@ from gtts import gTTS #https://pypi.org/project/gTTS/
 import wikipedia #https://pypi.org/project/wikipedia/
 import psutil #https://pypi.org/project/psutil/
 import platform # https://www.thepythoncode.com/article/get-hardware-system-information-python
+# import python-weather #https://pypi.org/project/python-weather/
 
 '''
 TRANSCRIBIR VOZ - TEXTO
@@ -139,8 +140,6 @@ def wikipedia_search (search):
     result = wikipedia.summary(search, sentences=1)
     text_to_speech(result)
 
-# TODO hablar con ChatGPT
-
 '''
 MONITORIZACIÓN Y CONTROL DEL EQUIPO
 '''
@@ -270,6 +269,8 @@ def monitoring_system ():
 '''
 JARVIS CORE
 '''
+# TODO GUI
+
 # start
 # play highway to hell
 os.system("ACDC-Highway_to_Hell.mp3")
@@ -342,7 +343,5 @@ while running:
         else:
             text_to_speech("Creo que no has dicho ningún comando existente")
 
-    
+# Clossing all back process
 tts.stop()
-
-# TODO GUI
