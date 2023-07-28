@@ -255,6 +255,7 @@ def wikipedia_search (search):
     result = wikipedia.summary(search, sentences=1)
     text_to_speech(result)
 
+# NASA APOD API
 def nasa_apod ():
     nasa_api_key = "OBFUSCATED"
     request_apod = requests.get("https://api.nasa.gov/planetary/apod?api_key=" + nasa_api_key)
@@ -411,15 +412,11 @@ JARVIS CORE
 # TODO GUI
 
 # start
-# play highway to hell
-os.system("ACDC-Highway_to_Hell.mp3")
+#text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
+text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿Qué puedo hacer por usted?")
 
 # loop
 running = True
-
-# starting the program, the welcome
-#text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
-text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿Qué puedo hacer por usted?")
 
 while running:
     commands = speech_to_text()
@@ -444,6 +441,7 @@ while running:
     command_write_this = "escribe esto"
     command_test_internet_speed = "haz un test de velocidad de internet"
     command_nasa_apod = "enséñame la imagen del día de la NASA"
+    command_acdc = "pon algo de música"
 
     all_commands = [
         command_power_off,
@@ -465,6 +463,7 @@ while running:
         command_write_this,
         command_test_internet_speed,
         command_nasa_apod,
+        command_acdc,
     ]
 
     # Split commands
@@ -523,6 +522,11 @@ while running:
             test_internet_speed()
         elif command_nasa_apod in command:
             nasa_apod()
+        elif command_acdc in command:
+            text_to_speech("que disfrute la canción señor")
+            # play highway to hell
+            os.system("ACDC-Highway_to_Hell.mp3")
+            running = False
         else:
             text_to_speech("Creo que no has dicho ningún comando existente")
 
