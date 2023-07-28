@@ -2,6 +2,7 @@ import os
 import asyncio
 import time
 import datetime
+import webbrowser
 import speech_recognition #https://pypi.org/project/SpeechRecognition/
 import pyttsx3 #https://pypi.org/project/pyttsx3/
 from gtts import gTTS #https://pypi.org/project/gTTS/
@@ -205,7 +206,14 @@ async def get_weather (city: str):
 '''
 BUSCAR INFORMACIÓN
 '''
-# TODO buscar en google
+# buscar en google
+def google_search (query: str):
+    webbrowser.open("https://www.google.com/search?q=" + query)
+
+# buscar en YouTube
+def youtube_search (query: str):
+    webbrowser.open("https://www.youtube.com/results?search_query=" + query)
+
 # buscar en wikipedia
 wikipedia.set_lang("es")
 def wikipedia_search (search):
@@ -368,6 +376,8 @@ while running:
     command_wikipedia = "busca en Wikipedia"
     command_system_info = "monitoriza el sistema"
     command_weather = "dime el tiempo en"
+    command_google_search = "busca en Google"
+    command_youtube_search = "busca en youtube"
 
     all_commands = [
         command_power_off,
@@ -380,6 +390,8 @@ while running:
         command_wikipedia,
         command_system_info,
         command_weather,
+        command_google_search,
+        command_youtube_search,
     ]
 
     # Split commands
@@ -417,6 +429,12 @@ while running:
         elif command_weather in command:
             city = command.split(command_weather)[1]
             asyncio.run(get_weather(city))
+        elif command_google_search in command:
+            query = command.split(command_google_search)[1]
+            google_search(query)
+        elif command_youtube_search in command:
+            query = command.split(command_youtube_search)[1]
+            youtube_search(query)
         else:
             text_to_speech("Creo que no has dicho ningún comando existente")
 
