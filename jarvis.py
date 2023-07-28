@@ -1,4 +1,5 @@
 import os
+import asyncio
 import time
 import datetime
 import speech_recognition #https://pypi.org/project/SpeechRecognition/
@@ -7,7 +8,7 @@ from gtts import gTTS #https://pypi.org/project/gTTS/
 import wikipedia #https://pypi.org/project/wikipedia/
 import psutil #https://pypi.org/project/psutil/
 import platform # https://www.thepythoncode.com/article/get-hardware-system-information-python
-# import python-weather #https://pypi.org/project/python-weather/
+import python_weather #https://pypi.org/project/python-weather/
 
 '''
 TRANSCRIBIR VOZ - TEXTO
@@ -128,7 +129,78 @@ def date_time_data ():
     date_time = f"Hoy es {weekday}, {datetime_now.day} del {datetime_now.month} de {datetime_now.year} y son las {datetime_now.hour} y {datetime_now.minute}"
     text_to_speech(date_time)
 
-# TODO datos de clima
+# datos de clima
+async def get_weather (city: str):
+    async with python_weather.Client(unit=python_weather.METRIC) as client:
+        weather = await client.get(city)
+
+        # Current information
+        temperature = weather.current.temperature
+        temperature_sensation = weather.current.feels_like
+        humidity = weather.current.humidity
+        pressure = weather.current.pressure
+        wind_direction = weather.current.wind_direction
+        wind_speed = weather.current.wind_speed
+        precipitation = weather.current.precipitation
+        
+        text_to_speech(f"El tiempo en {city} ahora")
+        text_to_speech(f"Temperatura de {temperature} grados centígrados con sensación de {temperature_sensation} grados centígrados")
+        text_to_speech(f"Humedad del {humidity}%")
+        text_to_speech(f"Presión del aire de {pressure:.0f} Pascales")
+        text_to_speech(f"Velocidad del viento de {wind_speed} km/h")
+        text_to_speech(f"Precipitaciones de {precipitation} mililitros por centímetro cúbico")
+        
+
+        text_to_speech(f"Te dejo la información de los próximos días en la consola")
+        for forecast in weather.forecasts:
+            # forecast data
+            astronomy = forecast.astronomy
+            print(f"Día: {forecast.date.day}/{forecast.date.month}/{forecast.date.year}")
+            print(f"Temperatura media: {forecast.temperature}ºC")
+            print(f"Temperatura máx: {forecast.highest_temperature}ºC")
+            print(f"Temperatura min: {forecast.lowest_temperature}ºC")
+            # Sun information
+            print(f"Total de horas de sol: {forecast.sunlight}")
+            print(f"Sol visible entre las: {astronomy.sun_rise.hour} y {astronomy.sun_set.hour}")
+            # Moon information
+            print(f"Porcentaje de Luna iluminada: {astronomy.moon_illumination}%")
+            print(f"Luna visible entre las: {astronomy.moon_rise.hour} y {astronomy.moon_set.hour}")
+
+            # hourly forecast data 
+            print("Datos desglosados por horas:")
+            for hourly in forecast.hourly:
+                print("*"*50)
+                print(f"A las {hourly.time.hour}:")
+                print("-"*30)
+                print("Datos de temperatura:")
+                print(f"Temperatura: {hourly.temperature} ºC")
+                print(f"Sensación térmica: {hourly.feels_like} ºC")
+                print(f"Índice de calor: {hourly.heat_index} ºC")
+                print(f"Probabilidad de alta temperatura: {hourly.chances_of_hightemp}%")
+                print("-"*30)
+                print("Datos del aire y viento:")
+                print(f"Humedad del aire: {hourly.humidity}%")
+                print(f"Velocidad del viento: {hourly.wind_speed} km/h")
+                print(f"Ráfagas de viento: {hourly.wind_gust} km/h")
+                print(f"Enfriamiento del viento: {hourly.wind_chill} ºC")
+                print(f"Probabilidad de viento: {hourly.chances_of_windy}%")
+                print("-"*30)
+                print("Datos de rayos de sol:")
+                print(f"Rayos UV: {hourly.ultraviolet}")
+                print(f"Porcentaje de cielo cubierto: {hourly.cloud_cover}%")
+                print(f"Probabilidad de sol radiante: {hourly.chances_of_sunshine}%")
+                print(f"Probabilidad de estar nublado: {hourly.chances_of_overcast}%")
+                print("-"*30)
+                print("Datos de precipitaciones:")
+                print(f"Precipitaciones: {hourly.precipitation} ml/cm3")
+                print(f"Punto de rocío: {hourly.dew_point} ºC")
+                print(f"probabilidad de lluvia: {hourly.chances_of_rain} %")
+                print(f"Probabilidad de nieve: {hourly.chances_of_snow}%")
+                print("-"*30)
+                print("Datos atmosféricos:")
+                print(f"Presión: {hourly.pressure} Pa")
+                print(f"Probabilidad de hielo: {hourly.chances_of_frost}%")
+                print(f"Probabilidad de truenos: {hourly.chances_of_thunder} %")
 
 '''
 BUSCAR INFORMACIÓN
@@ -295,6 +367,7 @@ while running:
     command_say_datetime = "dime el día con hora de hoy"
     command_wikipedia = "busca en Wikipedia"
     command_system_info = "monitoriza el sistema"
+    command_weather = "dime el tiempo en"
 
     all_commands = [
         command_power_off,
@@ -306,6 +379,7 @@ while running:
         command_say_datetime,
         command_wikipedia,
         command_system_info,
+        command_weather,
     ]
 
     # Split commands
@@ -340,6 +414,9 @@ while running:
             wikipedia_search(command.split(command_wikipedia)[1])
         elif command_system_info in command:
             monitoring_system()
+        elif command_weather in command:
+            city = command.split(command_weather)[1]
+            asyncio.run(get_weather(city))
         else:
             text_to_speech("Creo que no has dicho ningún comando existente")
 
