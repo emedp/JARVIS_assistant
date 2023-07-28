@@ -8,8 +8,9 @@ import pyttsx3 #https://pypi.org/project/pyttsx3/
 from gtts import gTTS #https://pypi.org/project/gTTS/
 import wikipedia #https://pypi.org/project/wikipedia/
 import psutil #https://pypi.org/project/psutil/
-import platform # https://www.thepythoncode.com/article/get-hardware-system-information-python
+import platform #https://www.thepythoncode.com/article/get-hardware-system-information-python
 import python_weather #https://pypi.org/project/python-weather/
+import pyautogui #https://pypi.org/project/PyAutoGUI/
 
 '''
 TRANSCRIBIR VOZ - TEXTO
@@ -101,6 +102,37 @@ def text_to_speech_google(text: str):
     os.remove("tts.mp3")
 
     return tts
+
+'''
+USO DEL TECLADO
+'''
+# Mutear volumen
+def volume_mute ():
+    pyautogui.press('volumemute')
+
+# Subir volumen
+def volume_up ():
+    pyautogui.press('volumeup')
+    pyautogui.press('volumeup')
+    pyautogui.press('volumeup')
+    pyautogui.press('volumeup')
+    pyautogui.press('volumeup')
+
+# Bajar volumen
+def volume_down ():
+    pyautogui.press('volumedown')
+    pyautogui.press('volumedown')
+    pyautogui.press('volumedown')
+    pyautogui.press('volumedown')
+    pyautogui.press('volumedown')
+
+# Tomar captura pantalla
+def screenshot ():
+    pyautogui.screenshot().save('screenshot.jpg')
+
+# Escribir por teclado
+def write_this (text: str):
+    pyautogui.write(text, interval=0.1)
 
 '''
 DATOS DE TIEMPO Y LUGAR
@@ -343,7 +375,6 @@ def monitoring_system ():
     text_to_speech(f"Total errores al enviar datos desde arranque: {net_io.errout}")
     text_to_speech(f"Total errores al recibir datos desde arranque: {net_io.errin}")
 
-# TODO cambiar valores del sistema como volumen, etc
 # TODO check internet velocity
 
 '''
@@ -378,6 +409,11 @@ while running:
     command_weather = "dime el tiempo en"
     command_google_search = "busca en Google"
     command_youtube_search = "busca en youtube"
+    command_volume_mute = "mutea el volumen"
+    command_volume_up = "sube el volumen"
+    command_volume_down = "baja el volumen"
+    command_screenshot = "haz una captura de pantalla"
+    command_write_this = "escribe esto"
 
     all_commands = [
         command_power_off,
@@ -392,6 +428,11 @@ while running:
         command_weather,
         command_google_search,
         command_youtube_search,
+        command_volume_up,
+        command_volume_down,
+        command_volume_mute,
+        command_screenshot,
+        command_write_this,
     ]
 
     # Split commands
@@ -435,6 +476,17 @@ while running:
         elif command_youtube_search in command:
             query = command.split(command_youtube_search)[1]
             youtube_search(query)
+        elif command_volume_mute in command:
+            volume_mute()
+        elif command_volume_up in command:
+            volume_up()
+        elif command_volume_down in command:
+            volume_down()
+        elif command_screenshot in command:
+            screenshot()
+        elif command_write_this in command:
+            text = command.split(command_write_this)[1]
+            write_this(text)
         else:
             text_to_speech("Creo que no has dicho ningún comando existente")
 
