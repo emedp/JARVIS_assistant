@@ -257,7 +257,9 @@ def wikipedia_search (search):
 
 # NASA APOD API
 def nasa_apod ():
-    nasa_api_key = "OBFUSCATED"
+    nasa_api_key = ""
+    with open("NASA_API.txt") as file:
+        nasa_api_key = file.readline()
     request_apod = requests.get("https://api.nasa.gov/planetary/apod?api_key=" + nasa_api_key)
 
     # JSON data
