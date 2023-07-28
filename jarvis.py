@@ -11,6 +11,7 @@ import psutil #https://pypi.org/project/psutil/
 import platform #https://www.thepythoncode.com/article/get-hardware-system-information-python
 import python_weather #https://pypi.org/project/python-weather/
 import pyautogui #https://pypi.org/project/PyAutoGUI/
+import speedtest #https://pypi.org/project/speedtest-cli/
 
 '''
 TRANSCRIBIR VOZ - TEXTO
@@ -375,7 +376,14 @@ def monitoring_system ():
     text_to_speech(f"Total errores al enviar datos desde arranque: {net_io.errout}")
     text_to_speech(f"Total errores al recibir datos desde arranque: {net_io.errin}")
 
-# TODO check internet velocity
+# check internet velocity
+def test_internet_speed ():
+    internet_speed_test = speedtest.Speedtest()
+    text_to_speech("Realizando test de velocidad a internet")
+    download = int(internet_speed_test.download() / 1000000) # bps to Mbps
+    upload   = int(internet_speed_test.upload() / 1000000) # bps to Mbps
+    
+    text_to_speech(f"La velocidad de internet es: {download} Megabits por segundo de bajada y {upload} Megabits por segundo de subida")
 
 '''
 JARVIS CORE
@@ -414,6 +422,7 @@ while running:
     command_volume_down = "baja el volumen"
     command_screenshot = "haz una captura de pantalla"
     command_write_this = "escribe esto"
+    command_test_internet_speed = "haz un test de velocidad de internet"
 
     all_commands = [
         command_power_off,
@@ -433,6 +442,7 @@ while running:
         command_volume_mute,
         command_screenshot,
         command_write_this,
+        command_test_internet_speed,
     ]
 
     # Split commands
@@ -487,6 +497,8 @@ while running:
         elif command_write_this in command:
             text = command.split(command_write_this)[1]
             write_this(text)
+        elif command_test_internet_speed in command:
+            test_internet_speed()
         else:
             text_to_speech("Creo que no has dicho ningún comando existente")
 
