@@ -3,6 +3,8 @@ import asyncio
 import time
 import datetime
 import webbrowser
+import requests
+import json
 import speech_recognition #https://pypi.org/project/SpeechRecognition/
 import pyttsx3 #https://pypi.org/project/pyttsx3/
 from gtts import gTTS #https://pypi.org/project/gTTS/
@@ -253,6 +255,24 @@ def wikipedia_search (search):
     result = wikipedia.summary(search, sentences=1)
     text_to_speech(result)
 
+def nasa_apod ():
+    nasa_api_key = "OBFUSCATED"
+    request_apod = requests.get("https://api.nasa.gov/planetary/apod?api_key=" + nasa_api_key)
+
+    # JSON data
+    json_apod = json.loads(request_apod.content)
+    date = datetime.datetime.fromisoformat(json_apod['date'])
+    title = json_apod['title']
+    explanation = json_apod['explanation']
+    media_type = json_apod['media_type']
+    hdurl = json_apod['hdurl']
+    
+    text_to_speech(f"Imagen astronómica del día: {date.day}/{date.month}/{date.year}")
+    text_to_speech("Te abro la imagen en el navegador y te dejo datos en la terminal")
+    print("Título: " + title)
+    print("Explicación:\n" + explanation)
+    webbrowser.open(hdurl)
+
 '''
 MONITORIZACIÓN Y CONTROL DEL EQUIPO
 '''
@@ -423,6 +443,7 @@ while running:
     command_screenshot = "haz una captura de pantalla"
     command_write_this = "escribe esto"
     command_test_internet_speed = "haz un test de velocidad de internet"
+    command_nasa_apod = "enséñame la imagen del día de la NASA"
 
     all_commands = [
         command_power_off,
@@ -443,6 +464,7 @@ while running:
         command_screenshot,
         command_write_this,
         command_test_internet_speed,
+        command_nasa_apod,
     ]
 
     # Split commands
@@ -499,6 +521,8 @@ while running:
             write_this(text)
         elif command_test_internet_speed in command:
             test_internet_speed()
+        elif command_nasa_apod in command:
+            nasa_apod()
         else:
             text_to_speech("Creo que no has dicho ningún comando existente")
 
