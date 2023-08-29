@@ -411,62 +411,77 @@ def test_internet_speed ():
 '''
 JARVIS CORE
 '''
-# TODO GUI
 
-# start
-#text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
-text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿Qué puedo hacer por usted?")
+# START
 
-# loop
+# CONSTANTS
+# listado de comandos
+command_all_comands = "dime qué puedes hacer"
+command_power_off = "apágate"
+command_say = "di qué"
+command_google_say = "haz que Google diga"
+command_change_voice = "cambia tu voz"
+command_change_volume = "cambia el volumen a"
+command_change_rate = "cambia la velocidad a"
+command_say_datetime = "dime el día con hora de hoy"
+command_wikipedia = "busca en Wikipedia"
+command_system_info = "monitoriza el sistema"
+command_weather = "dime el tiempo en"
+command_google_search = "busca en Google"
+command_youtube_search = "busca en youtube"
+command_volume_mute = "mutea el volumen"
+command_volume_up = "sube el volumen"
+command_volume_down = "baja el volumen"
+command_screenshot = "haz una captura de pantalla"
+command_write_this = "escribe esto"
+command_test_internet_speed = "haz un test de velocidad de internet"
+command_nasa_apod = "enséñame la imagen del día de la NASA"
+command_acdc = "pon algo de música"
+
+all_commands = [
+    command_power_off,
+    command_say,
+    command_google_say,
+    command_change_voice,
+    command_change_volume,
+    command_change_rate,
+    command_say_datetime,
+    command_wikipedia,
+    command_system_info,
+    command_weather,
+    command_google_search,
+    command_youtube_search,
+    command_volume_up,
+    command_volume_down,
+    command_volume_mute,
+    command_screenshot,
+    command_write_this,
+    command_test_internet_speed,
+    command_nasa_apod,
+    command_acdc,
+]
+
+# PARAMETERS
 running = True
+trigger = "asistente"
 
+#text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
+# TODO: launch UI
+text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿Qué puedo hacer por usted?")
+text_to_speech(f"Recuerde que debe decir '{trigger}' antes de un comando para activarme")
+text_to_speech(f"puede decir: '{command_all_comands}' para obtener una lista de los comandos")
+
+# LOOP
 while running:
+    # TODO: UI listening animation
     commands = speech_to_text()
 
-    command_all_comands = "dime qué puedes hacer"
-    command_power_off = "apágate"
-    command_say = "di esto"
-    command_google_say = "haz que Google diga"
-    command_change_voice = "cambia tu voz"
-    command_change_volume = "cambia el volumen a"
-    command_change_rate = "cambia la velocidad a"
-    command_say_datetime = "dime el día con hora de hoy"
-    command_wikipedia = "busca en Wikipedia"
-    command_system_info = "monitoriza el sistema"
-    command_weather = "dime el tiempo en"
-    command_google_search = "busca en Google"
-    command_youtube_search = "busca en youtube"
-    command_volume_mute = "mutea el volumen"
-    command_volume_up = "sube el volumen"
-    command_volume_down = "baja el volumen"
-    command_screenshot = "haz una captura de pantalla"
-    command_write_this = "escribe esto"
-    command_test_internet_speed = "haz un test de velocidad de internet"
-    command_nasa_apod = "enséñame la imagen del día de la NASA"
-    command_acdc = "pon algo de música"
-
-    all_commands = [
-        command_power_off,
-        command_say,
-        command_google_say,
-        command_change_voice,
-        command_change_volume,
-        command_change_rate,
-        command_say_datetime,
-        command_wikipedia,
-        command_system_info,
-        command_weather,
-        command_google_search,
-        command_youtube_search,
-        command_volume_up,
-        command_volume_down,
-        command_volume_mute,
-        command_screenshot,
-        command_write_this,
-        command_test_internet_speed,
-        command_nasa_apod,
-        command_acdc,
-    ]
+    # loop only works with trigger    
+    if commands.count(trigger) == 1:
+        commands = commands.split(trigger)[1]
+        # TODO: UI speaking animation
+    else:
+        continue
 
     # Split commands
     for command in commands.split(" y "):
@@ -479,7 +494,6 @@ while running:
             text_to_speech("Estos son todos los comandos que puedes realizar")
             for option in all_commands:
                 text_to_speech(option)
-
         elif command_say in command:
             text_to_speech(command.split(command_say)[1])
         elif command_google_say in command:
@@ -528,9 +542,8 @@ while running:
             text_to_speech("que disfrute la canción señor")
             # play highway to hell
             os.system("ACDC-Highway_to_Hell.mp3")
-            running = False
         else:
-            text_to_speech("Creo que no has dicho ningún comando existente")
+            text_to_speech(f"no sé que hacer con el comando: {command}")
 
 # Clossing all back process
 tts.stop()
