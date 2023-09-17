@@ -436,7 +436,6 @@ command_screenshot = "haz una captura de pantalla"
 command_write_this = "escribe esto"
 command_test_internet_speed = "haz un test de velocidad de internet"
 command_nasa_apod = "enséñame la imagen del día de la NASA"
-command_acdc = "pon algo de música"
 
 all_commands = [
     command_power_off,
@@ -458,7 +457,6 @@ all_commands = [
     command_write_this,
     command_test_internet_speed,
     command_nasa_apod,
-    command_acdc,
 ]
 
 # PARAMETERS
@@ -538,10 +536,6 @@ while running:
             test_internet_speed()
         elif command_nasa_apod in command:
             nasa_apod()
-        elif command_acdc in command:
-            text_to_speech("que disfrute la canción señor")
-            # play highway to hell
-            os.system("ACDC-Highway_to_Hell.mp3")
         else:
             text_to_speech(f"no sé que hacer con el comando: {command}")
 
