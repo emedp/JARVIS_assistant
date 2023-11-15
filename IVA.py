@@ -461,7 +461,7 @@ all_commands = [
 
 # PARAMETERS
 running = True
-trigger = "asistente"
+trigger = "Eva"
 
 #text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
 # TODO: launch UI
