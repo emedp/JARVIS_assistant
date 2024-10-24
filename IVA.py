@@ -3,8 +3,6 @@ import asyncio
 import time
 import datetime
 import webbrowser
-import requests
-import json
 import speech_recognition #https://pypi.org/project/SpeechRecognition/
 import pyttsx3 #https://pypi.org/project/pyttsx3/
 from gtts import gTTS #https://pypi.org/project/gTTS/
@@ -14,6 +12,64 @@ import platform #https://www.thepythoncode.com/article/get-hardware-system-infor
 import python_weather #https://pypi.org/project/python-weather/
 import pyautogui #https://pypi.org/project/PyAutoGUI/
 import speedtest #https://pypi.org/project/speedtest-cli/
+
+'''
+LINKS OF REFENRECES
+'''
+# https://www.youtube.com/watch?v=CqSsGvg0Mls
+# https://www.youtube.com/watch?v=RjF_j6QZpxc
+# https://www.youtube.com/watch?v=zZ0tYNEv0cQ
+# https://www.youtube.com/watch?v=LuuOpozKbvE
+
+'''
+CORE
+'''
+# PARAMETERS
+running = True
+trigger = "Eva"
+
+# CONSTANTS
+# listado de comandos
+command_all_comands = "dime qué puedes hacer"
+command_power_off = "apágate"
+command_say = "di qué"
+command_google_say = "haz que Google diga"
+command_change_voice = "cambia tu voz"
+command_change_volume = "cambia el volumen a"
+command_change_rate = "cambia la velocidad a"
+command_say_datetime = "dime el día con hora de hoy"
+command_wikipedia = "busca en Wikipedia"
+command_system_info = "monitoriza el sistema"
+command_weather = "dime el tiempo en"
+command_google_search = "busca en Google"
+command_youtube_search = "busca en youtube"
+command_volume_mute = "mutea el volumen"
+command_volume_up = "sube el volumen"
+command_volume_down = "baja el volumen"
+command_screenshot = "haz una captura de pantalla"
+command_write_this = "escribe esto"
+command_test_internet_speed = "haz un test de velocidad de internet"
+
+all_commands = [
+    command_power_off,
+    command_say,
+    command_google_say,
+    command_change_voice,
+    command_change_volume,
+    command_change_rate,
+    command_say_datetime,
+    command_wikipedia,
+    command_system_info,
+    command_weather,
+    command_google_search,
+    command_youtube_search,
+    command_volume_up,
+    command_volume_down,
+    command_volume_mute,
+    command_screenshot,
+    command_write_this,
+    command_test_internet_speed,
+]
 
 '''
 TRANSCRIBIR VOZ - TEXTO
@@ -388,65 +444,17 @@ def test_internet_speed ():
     text_to_speech(f"La velocidad de internet es: {download} Megabits por segundo de bajada y {upload} Megabits por segundo de subida")
 
 '''
-JARVIS CORE
+START
 '''
-
-# START
-
-# CONSTANTS
-# listado de comandos
-command_all_comands = "dime qué puedes hacer"
-command_power_off = "apágate"
-command_say = "di qué"
-command_google_say = "haz que Google diga"
-command_change_voice = "cambia tu voz"
-command_change_volume = "cambia el volumen a"
-command_change_rate = "cambia la velocidad a"
-command_say_datetime = "dime el día con hora de hoy"
-command_wikipedia = "busca en Wikipedia"
-command_system_info = "monitoriza el sistema"
-command_weather = "dime el tiempo en"
-command_google_search = "busca en Google"
-command_youtube_search = "busca en youtube"
-command_volume_mute = "mutea el volumen"
-command_volume_up = "sube el volumen"
-command_volume_down = "baja el volumen"
-command_screenshot = "haz una captura de pantalla"
-command_write_this = "escribe esto"
-command_test_internet_speed = "haz un test de velocidad de internet"
-
-all_commands = [
-    command_power_off,
-    command_say,
-    command_google_say,
-    command_change_voice,
-    command_change_volume,
-    command_change_rate,
-    command_say_datetime,
-    command_wikipedia,
-    command_system_info,
-    command_weather,
-    command_google_search,
-    command_youtube_search,
-    command_volume_up,
-    command_volume_down,
-    command_volume_mute,
-    command_screenshot,
-    command_write_this,
-    command_test_internet_speed,
-]
-
-# PARAMETERS
-running = True
-trigger = "Eva"
-
-#text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
 # TODO: launch UI
+text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
 text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿Qué puedo hacer por usted?")
-text_to_speech(f"Recuerde que debe decir '{trigger}' antes de un comando para activarme")
-text_to_speech(f"puede decir: '{command_all_comands}' para obtener una lista de los comandos")
+text_to_speech(f"Recuerde que para activarme debe decir: '{trigger}'")
+text_to_speech(f"Para obtener una lista de los comandos diga: '{command_all_comands}'")
 
-# LOOP
+'''
+LOOP
+'''
 while running:
     # TODO: UI listening animation
     commands = speech_to_text()
@@ -462,13 +470,13 @@ while running:
     for command in commands.split(" y "):
         # analize command
         if command_power_off in command:
-            text_to_speech("Hasta luego señor")
+            text_to_speech("Hasta luego, señor")
             running = False
             break
         elif command_all_comands in command:
-            text_to_speech("Estos son todos los comandos que puedes realizar")
+            text_to_speech("Te muestro en la consola el listado de comandos posibles")
             for option in all_commands:
-                text_to_speech(option)
+                print(option)
         elif command_say in command:
             text_to_speech(command.split(command_say)[1])
         elif command_google_say in command:
