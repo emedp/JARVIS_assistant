@@ -446,8 +446,10 @@ def test_internet_speed ():
 '''
 START
 '''
-# TODO: launch UI
-text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
+#os.system("ACDC-Highway_to_Hell.mp3")
+#os.system("UI_ideas/IA_sphere.gif")
+
+#text_to_speech("welcome back sir. all systems for gaming will be prepared in a few minutes. For now feel free to grab a cup of coffee and have a good day.")
 text_to_speech("Bienvenido de nuevo señor, los sistemas están listos, ¿Qué puedo hacer por usted?")
 text_to_speech(f"Recuerde que para activarme debe decir: '{trigger}'")
 text_to_speech(f"Para obtener una lista de los comandos diga: '{command_all_comands}'")
@@ -470,7 +472,7 @@ while running:
     for command in commands.split(" y "):
         # analize command
         if command_power_off in command:
-            text_to_speech("Hasta luego, señor")
+            text_to_speech("Hasta luego señor")
             running = False
             break
         elif command_all_comands in command:
